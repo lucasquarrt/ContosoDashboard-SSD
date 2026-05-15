@@ -23,10 +23,10 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize C# .NET project with Blazor Server dependencies
-- [ ] T003 [P] Configure Entity Framework Core for SQLite database
-- [ ] T004 [P] Set up local file storage directory structure
+- [X] T001 Create project structure per implementation plan
+- [X] T002 Initialize C# .NET project with Blazor Server dependencies
+- [X] T003 [P] Configure Entity Framework Core for SQLite database
+- [X] T004 [P] Set up local file storage directory structure
 
 ---
 
@@ -36,13 +36,13 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 Implement IFileStorageService interface in src/Services/IFileStorageService.cs
-- [ ] T006 [P] Create LocalFileStorageService implementation in src/Services/LocalFileStorageService.cs
-- [ ] T007 [P] Add Document and DocumentShare entities to src/Models/
-- [ ] T008 [P] Configure database context for document entities
-- [ ] T009 [P] Create base DocumentService in src/Services/DocumentService.cs
-- [ ] T010 [P] Set up ASP.NET Core controllers for document API endpoints
-- [ ] T011 [P] Configure dependency injection for file storage and document services
+- [X] T005 Implement IFileStorageService interface in src/Services/IFileStorageService.cs
+- [X] T006 [P] Create LocalFileStorageService implementation in src/Services/LocalFileStorageService.cs
+- [X] T007 [P] Add Document and DocumentShare entities to src/Models/
+- [X] T008 [P] Configure database context for document entities
+- [X] T009 [P] Create base DocumentService in src/Services/DocumentService.cs
+- [X] T010 [P] Set up ASP.NET Core controllers for document API endpoints
+- [X] T011 [P] Configure dependency injection for file storage and document services
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -56,16 +56,16 @@
 
 ### Tests for User Story 1 (TDD - write tests first)
 
-- [ ] T012 [P] [US1] Create contract tests for file upload validation in tests/Contract/TestDocumentUpload.cs
-- [ ] T013 [P] [US1] Create integration tests for upload workflow in tests/Integration/TestDocumentUpload.cs
+- [X] T012 [P] [US1] Create contract tests for file upload validation in tests/Contract/TestDocumentUpload.cs
+- [X] T013 [P] [US1] Create integration tests for upload workflow in tests/Integration/TestDocumentUpload.cs
 
 ### Implementation for User Story 1
 
-- [ ] T014 [US1] Implement file upload endpoint in src/Controllers/DocumentsController.cs (POST /api/documents/upload)
-- [ ] T015 [US1] Add file validation logic (size, type) in DocumentService
-- [ ] T016 [US1] Implement metadata storage in database
-- [ ] T017 [US1] Add progress indication to upload UI
-- [ ] T018 [US1] Create upload form component in src/Pages/Documents/Upload.razor
+- [X] T014 [US1] Implement file upload endpoint in src/Controllers/DocumentsController.cs (POST /api/documents/upload)
+- [X] T015 [US1] Add file validation logic (size, type) in DocumentService
+- [X] T016 [US1] Implement metadata storage in database
+- [X] T017 [US1] Add progress indication to upload UI
+- [X] T018 [US1] Create upload form component in src/Pages/Documents/Upload.razor
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 

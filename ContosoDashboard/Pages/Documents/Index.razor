@@ -1,0 +1,146 @@
+@page "/documents"
+@inject ContosoDashboard.Services.DocumentService DocumentService
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@using System.Security.Claims
+
+<PageTitle>My Documents</PageTitle>
+
+<h3>My Documents</h3>
+
+<div class="mb-3">
+    <a href="/documents/upload" class="btn btn-primary">
+        <i class="bi bi-upload"></i> Upload Document
+    </a>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else if (documents.Count == 0)
+{
+    <div class="alert alert-info">
+        No documents found. <a href="/documents/upload">Upload your first document</a>.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Upload Date</th>
+                    <th>File Size</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var doc in documents)
+                {
+                    <tr>
+                        <td>@doc.Title</td>
+                        <td>@doc.Category</td>
+                        <td>@doc.UploadDate.ToShortDateString()</td>
+                        <td>@FormatFileSize(doc.FileSize)</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" @onclick="() => DownloadDocument(doc.DocumentId)">
+                                <i class="bi bi-download"></i> Download
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<DocumentViewModel> documents = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDocuments();
+    }
+
+    private async Task LoadDocuments()
+    {
+        try
+        {
+            isLoading = true;
+            // Get current user ID from authentication state
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                // Handle not authenticated
+                return;
+            }
+
+            var userDocuments = await DocumentService.GetDocumentsByUserAsync(userId);
+            var sharedDocuments = await DocumentService.GetSharedDocumentsAsync(userId);
+
+            documents = userDocuments.Concat(sharedDocuments)
+                .DistinctBy(d => d.DocumentId)
+                .Select(d => new DocumentViewModel
+                {
+                    DocumentId = d.DocumentId,
+                    Title = d.Title,
+                    Category = d.Category.ToString(),
+                    UploadDate = d.UploadDate,
+                    FileSize = d.FileSize
+                })
+                .OrderByDescending(d => d.UploadDate)
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            // Handle error
+            Console.WriteLine($"Error loading documents: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task DownloadDocument(int documentId)
+    {
+        Navigation.NavigateTo($"api/documents/{documentId}/download", true);
+    }
+
+    private string FormatFileSize(long bytes)
+    {
+        if (bytes < 1024) return $"{bytes} B";
+        if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+        return $"{bytes / (1024.0 * 1024.0):F1} MB";
+    }
+
+    public class DocumentViewModel
+    {
+        public int DocumentId { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public DateTime UploadDate { get; set; }
+        public long FileSize { get; set; }
+    }
+
+    public class DocumentsResult
+    {
+        public bool Success { get; set; }
+        public DocumentsData? Data { get; set; }
+    }
+
+    public class DocumentsData
+    {
+        public List<DocumentViewModel> Documents { get; set; } = new();
+    }
+}
